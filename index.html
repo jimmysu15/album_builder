@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>活動花絮產生器</title>
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/styles.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+</head>
+<body>
+<div class="row">
+	<div class="col-md-12" id="dragwrap">		
+		<form id="upload" action="upload.php" method="POST" enctype="multipart/form-data">
+
+		<fieldset>
+		<input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
+		<div>
+			<input type="file" id="fileselect" name="fileselect[]" multiple="multiple" />
+			<div id="filedrag">將電腦裡的圖片檔案拖放至此。<br>(圖片建議尺寸:寬 220 像素內，高 295 像素內)</div>
+		</div>
+
+		<div id="submitbutton">
+			<button type="submit">Upload Files</button>
+		</div>
+
+		</fieldset>
+
+		</form>
+	</div>
+	<div class="col-md-8 col-md-offset-4">		
+		<div class="step2">
+			<div class="toolbar clearfix">
+				<div class="input-group quickfill">
+				  <span class="input-group-addon" id="basic-addon1">通通填入文字:</span>	
+				  <input type="text" class="form-control" id="filtxt" placeholder="">
+					<span class="input-group-btn">
+						<button class="btn btn-primary btn_fill" type="button">執行 <span class="glyphicon glyphicon-circle-arrow-down"></span></button>
+					</span>
+				 </div>
+				 <div class="input-group foldername">
+					<span class="input-group-addon" id="basic-addon1">圖片資料夾名稱</span>	
+					<input type="text" class="form-control" id="foldername" value="img/activity/" placeholder="此批圖片將放在哪個資料夾裡面?">
+						<!--<span class="input-group-btn">
+							<a href="javascript:void(0);" class="btn btn-success btn_html" onclick="clear()"><span class="glyphicon glyphicon-check"></span> 產生 html  </a>
+						</span>-->
+						<div class="input-group-btn">
+							<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								產生 <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#" class="btn_html">HTML 程式碼片段</a></li>
+								<li><a href="#" class="btn_htmlfile">HTML 檔案</a></li>
+								<!--<li><a href="#" class="btn_image">圖片</a></li>-->
+							</ul>
+						</div>
+				 </div><!-- /input-group -->			
+				<a href="javascript:void(0);" class="btn btn-danger pull-right btn_clear" onclick="clear()"><span class="glyphicon glyphicon-trash"></span> 全部清空 </a>
+			</div>	
+			<ul id="photo" class="">
+				
+			</ul>
+		</div>
+	</div>	
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="htmlcodemodal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">產生 html</h4>
+      </div>
+      <div class="modal-body">
+        <textarea id="htmlcode_result"></textarea>
+				<div id="img_result"></div>	
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">關閉</button>
+        <button type="button" class="btn btn-primary">返回修改</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div id="temp"></div>
+
+<div class="alertbottom alert alert-warrnig">
+	<span id="msg">載入成功，請輸入要放在照片上的文字。</span>	
+	<div class="loading"><img src="img/ellipsis.svg"></div>
+</div>
+<input type="hidden" id="startedit" value="0">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="js/filedrag.js"></script>
+<script async="" src="js/Blob.js"></script>
+<script async="" src="js/canvas-toBlob.js"></script>
+<script async="" src="js/FileSaver.js"></script>
+<script src="js/html2canvas.js"></script>
+<script src="js/html2canvas.svg.js"></script>
+<script>
+	$(window).bind('beforeunload', function () {
+            if ($('#startedit').val() == "1") return "是否確定關閉網頁?";
+        });
+
+	function addZero(i) {if (i < 10) {i = "0" + i;} return i;}
+	var currentdate = new Date(); 
+	var datetime = currentdate.getFullYear() + "" + (currentdate.getMonth()+1) + "" + currentdate.getDate();
+	var htmlpart1 = "", htmlpart2 = "";
+        $.ajax({
+                    url: 'part1.txt',
+                    async: false,
+                    type: 'get',
+                    dataType: 'text',
+                    success: function (rest) {
+                        htmlpart1 = rest;
+												$.ajax({
+															url: 'part2.txt',
+															async: false,
+															type: 'get',
+															dataType: 'text',
+															success: function (rest) {
+																	htmlpart2 = rest;
+															}
+												});     
+                    }
+        }); 
+	//console.log(htmlpart1,htmlpart2)				
+	$('.btn_clear').click(function(){
+		if(confirm('是否確認清空?')) {
+			location.href = location.href
+		}
+	});
+	
+	
+	$('.btn_fill').click(function(){
+		var filltxt = $('#filtxt').val();
+		$('#photo .form-control').each(function(){
+			$(this).val(filltxt);
+		});
+	});
+	
+	$('#photo').on('click', '.del', function(){
+		$(this).parent().remove()
+	});
+	
+	$('#photo').on('click', '.form-control', function(){
+		console.log($(this).val());
+		if ($(this).val() == "點此輸入文字") $(this).val('');
+	});
+	
+	$('.btn_htmlfile').click(function(){
+		$('#temp').html();
+		$('#photo').clone().appendTo('#temp');
+		var foldername = $('#foldername').val();
+		$('#temp #photo').removeClass('ui-sortable');
+		$('#temp img').each(function(){
+			var thissrc = $(this).data('src'); 
+			$(this).attr('src', foldername+thissrc);
+			$(this).removeAttr( "data-src" );
+		});
+		$('#temp .form-control').each(function(){
+			var thistxt = $(this).val(); 
+			$(this).next().text(thistxt);
+			$(this).remove();
+		});
+		$('#temp .del').each(function(){
+			$(this).remove();
+		});
+		$('#temp li').each(function(){
+			$(this).removeClass('ui-sortable-handle');
+		});
+				  
+					
+		var temphtml = $('#temp').html();
+		var filename = datetime;
+		var blob = new Blob([htmlpart1+temphtml+htmlpart2], {type: "text/html;charset=utf-8"});
+		saveAs(blob, filename+".html");									
+	});
+	
+	$('.btn_html').click(function(){
+      $('#temp').html();
+	  $('#photo').clone().appendTo('#temp');
+		var foldername = $('#foldername').val();
+		$('#temp #photo').removeClass('ui-sortable');
+		$('#temp img').each(function(){
+			var thissrc = $(this).data('src'); 
+			$(this).attr('src', foldername+thissrc);
+			$(this).removeAttr( "data-src" );
+		});
+		$('#temp .form-control').each(function(){
+			var thistxt = $(this).val(); 
+			$(this).next().text(thistxt);
+			$(this).remove();
+		});
+		$('#temp .del').each(function(){
+			$(this).remove();
+		});
+		$('#temp li').each(function(){
+			$(this).removeClass('ui-sortable-handle');
+		});
+
+		var temphtml = $('#temp').html();
+		$('#htmlcode_result').siblings().hide();
+		$('#htmlcode_result').val(temphtml);
+		$('#htmlcodemodal').modal();
+  });
+  
+  $('.btn_image').click(function(){
+	  	$('#temp').html();
+		$('#photo').clone().appendTo('#temp');
+		var foldername = $('#foldername').val();
+		$('#temp #photo').removeClass('ui-sortable');
+		// $('#temp img').each(function(){
+		// 	var thissrc = $(this).data('src'); 
+		// 	$(this).attr('src', foldername+thissrc);
+		// 	$(this).removeAttr( "data-src" );
+		// });
+		$('#temp .form-control').each(function(){
+			var thistxt = $(this).val(); 
+			$(this).next().text(thistxt);
+			$(this).remove();
+		});
+		$('#temp .del').each(function(){
+			$(this).remove();
+		});
+		$('#temp li').each(function(){
+			$(this).removeClass('ui-sortable-handle');
+		});
+		
+		var temphtml = $('#temp').get(0);
+				
+		html2canvas(temphtml, {
+            onrendered: function(canvas) {
+                theCanvas = canvas;
+				
+				// canvas.toBlob(function(blob) {
+                //     saveAs(blob, datetime + "png"); 
+                // });
+				var myImage = canvas.toDataURL("image/png");
+            	window.open(myImage);
+				
+				// var a = document.createElement('a');
+				// a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
+				// a.download = 'somefilename.jpg';
+				// a.click();
+            }
+        });
+    
+		// temphtml.getContext('2d');
+		// window.open('', temphtml.toDataURL());				
+	});
+		
+	
+</script>
+<!--
+	https://www.sitepoint.com/html5-javascript-open-dropped-files/
+-->
+</body>
+</html>

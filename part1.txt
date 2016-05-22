@@ -1,0 +1,15 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>網頁標題</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />    
+    <link href='css/layout.css' rel='stylesheet' type='text/css' />    
+</head>
+
+<body>
+<header>網站名稱...</header>
+<article>
+
+          

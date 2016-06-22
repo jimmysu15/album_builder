@@ -36,14 +36,25 @@
 		<div class="step2">
 			<div class="toolbar clearfix">
 				<div class="input-group quickfill">
-				  <span class="input-group-addon" id="basic-addon1">通通填入文字:</span>
+				  <span class="input-group-addon" id="basic-addon1">通通填入文字：</span>
 				  <input type="text" class="form-control" id="filtxt" placeholder="">
-					<span class="input-group-btn">
-						<button class="btn btn-primary btn_fill" type="button">執行 <span class="glyphicon glyphicon-circle-arrow-down"></span></button>
-					</span>
+                    <div class="input-group-btn">
+							<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								選擇字型 <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li>
+                                    <a href="#" class="btn_font1">王漢宗注音</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="btn_font2">微軟正黑體</a>
+                                </li>
+							</ul>
+                        <button class="btn btn-primary btn_fill" type="button">執行 <span class="glyphicon glyphicon-circle-arrow-down"></span></button>
+				    </div>
 				 </div>
 				 <div class="input-group foldername">
-					<span class="input-group-addon" id="basic-addon1">圖片資料夾名稱</span>
+					<span class="input-group-addon" id="basic-addon1">圖片資料夾路徑</span>
 					<input type="text" class="form-control" id="foldername" value="img/activity/" placeholder="此批圖片將放在哪個資料夾裡面?">
 						<!--<span class="input-group-btn">
 							<a href="javascript:void(0);" class="btn btn-success btn_html" onclick="clear()"><span class="glyphicon glyphicon-check"></span> 產生 html  </a>
@@ -55,11 +66,17 @@
 							<ul class="dropdown-menu">
 								<li><a href="#" class="btn_html">HTML 程式碼片段</a></li>
 								<li><a href="#" class="btn_htmlfile">HTML 檔案</a></li>
-								<li><a href="#" class="btn_image2">圖片</a></li>
+<!--								<li><a href="#" class="btn_image2">圖片</a></li>-->
 							</ul>
-						</div>
-				 </div><!-- /input-group -->
-				<a href="javascript:void(0);" class="btn btn-danger pull-right btn_clear" onclick="clear()"><span class="glyphicon glyphicon-trash"></span> 全部清空 </a>
+						</div>										
+				 </div>
+                <!-- /input-group -->
+                
+                <div class="btn-group" style="margin-left:15px">
+                    <a href="javascript:void(0);" class="btn btn-info btn_hidedel" onclick="hidedel()"><span class="glyphicon glyphicon-remove"></span> 顯示/隱藏刪除按鈕 </a>
+				    <a href="javascript:void(0);" class="btn btn-danger btn_clear" onclick="clear()"><span class="glyphicon glyphicon-trash"></span> 全部清空 </a>
+                </div>
+                
 			</div>
 			<ul id="photo" class="">
 
@@ -136,6 +153,10 @@
 			location.href = location.href
 		}
 	});
+    
+    function hidedel(){
+        $('#photo .del').toggle();
+    } 
 
 
 	$('.btn_fill').click(function(){
@@ -290,6 +311,22 @@
 
 		// temphtml.getContext('2d');
 		// window.open('', temphtml.toDataURL());
+	});
+    
+    
+//    選擇字型
+
+    $('.btn_font1').click(function(){
+        //注音
+        $('#photo input').attr('class','');
+        $('#photo input').addClass('font1');
+        $('#photo input').addClass('form-control');        
+	});
+    $('.btn_font2').click(function(){
+        //沒注音
+        $('#photo input').attr('class','');
+        $('#photo input').addClass('font2');
+        $('#photo input').addClass('form-control');        
 	});
 
 

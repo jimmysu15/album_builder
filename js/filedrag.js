@@ -82,7 +82,7 @@ Developed by Craig Buckler (@craigbuckler) of OptimalWorks.net
 				Output(
 					//"<p><strong>" + file.name + ":</strong><br />" +
 					//'<img src="' + e.target.result + '" /></p>'
-					"<li><span class='del'>X</span><div>" + '<img data-src="'+ file.name +'"src="' + e.target.result + '" /></div><input type="text" value="點此輸入文字" class="form-control"><span></span></li>'
+					"<li><span class='del'>X</span><div>" + '<img data-src="'+ file.name +'"src="' + e.target.result + '" /></div><input type="text" value="點此輸入文字" class="form-control font1"><span></span></li>'
 				);
 			}
 			reader.readAsDataURL(file);
